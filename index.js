@@ -88,32 +88,34 @@ var mkdir = function(target, callback) {
 
 
 var compressFiles = function(directory, files, output, callback) {
-  callback = callback || function() {};
-  var tarOptions = ['--no-recursion', '--force-local', '-zcf', output, '-T', '-'];
-  log('Starting compression of ' + files.length + ' files into ' + output, 'info');
-  // child_process.spawn(command[, args][, options])
-  // cwd <String> Current working directory of the child process
-  var tar = spawn('tar', tarOptions, {cwd: directory});
-  var file = void 0;
-  for (var i = 0, var len = files.length; i < len; i++) {
-    file = files[i];
-    if (file[0] === '-') {
-      tar.stdin.write('--add-file=');
-    }
-    tar.stdin.write(file + '\n');
-  }
-  tar.stdin.end();
-  tar.stderr.on('data', function(data) {
-    return log(data, 'error');
-  });
-  tar.on('exit', function(code) {
-    if (code === 0) {
-      log('Successfully compressed', 'info');
-      return callback(null);
-    } else {
-      return callback(new Error('Tar exited with code ' + code));
-    }
-  });
+   var i, len, file;
+   callback = callback || function() {};
+   var tarOptions = ['--no-recursion', '--force-local', '-zcf', output, '-T', '-'];
+   log('Starting compression of ' + files.length + ' files into ' + output, 'info');
+   // child_process.spawn(command[, args][, options])
+   // cwd <String> Current working directory of the child process
+   var tar = spawn('tar', tarOptions, {
+      cwd: directory
+   });
+   for(i = 0, len = files.length; i < len; i++) {
+      file = files[i];
+      if(file[0] === '-') {
+         tar.stdin.write('--add-file=');
+      }
+      tar.stdin.write(file + '\n');
+   }
+   tar.stdin.end();
+   tar.stderr.on('data', function(data) {
+      return log(data, 'error');
+   });
+   tar.on('exit', function(code) {
+      if(code === 0) {
+         log('Successfully compressed', 'info');
+         return callback(null);
+      } else {
+         return callback(new Error('Tar exited with code ' + code));
+      }
+   });
 };
 
 
