@@ -135,11 +135,11 @@ var sendToStorj = function(options, directory, target, callback) {
    var destinationFile = destination + target;
    var tmppath = sourceFile + '.crypt';
 
-   var keypair = storj.KeyPair(fs.readFileSync(options.privatekey).toString());
+   var keypair = storj.KeyPair(fs.readFileSync(options.key).toString());
    //var keyring = storj.KeyRing('./', options.keypass);
    var secret = new storj.DataCipherKeyIv();
    var encrypter = new storj.EncryptStream(secret);
-
+   log('creating storj BridgeClient', 'info');
    var storjClient = storj.storj.BridgeClient('https://api.storj.io', {
       keypair: keypair,
       concurrency: options.concurrency // Set upload concurrency
