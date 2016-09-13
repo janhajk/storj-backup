@@ -17,6 +17,7 @@
   "author": "Janhajk <janhajk@gmail.com>",
   "license": "MIT",
   "dependencies": {
+     "storj": ">=3.1.2",
     "async": "~0.1.22",
     "cli": "~0.4.4-2",
     "cli-color": "~0.2.1"
