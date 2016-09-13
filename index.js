@@ -88,22 +88,14 @@ var mkdir = function(target, callback) {
 
 
 var compressFiles = function(directory, files, output, callback) {
+   log("Compression Parameters > directory: " + directory, info);
    var i, len, file;
    callback = callback || function() {};
-   var tarOptions = ['--no-recursion', '--force-local', '-zcf', output, '-T', '-'];
+   var tarOptions = ['--force-local', '-zcf', output, files.join(" ")];
    log('Starting compression of ' + files.length + ' files into ' + output, 'info');
    // child_process.spawn(command[, args][, options])
    // cwd <String> Current working directory of the child process
-   var tar = spawn('tar', tarOptions, {
-      cwd: directory
-   });
-   for(i = 0, len = files.length; i < len; i++) {
-      file = files[i];
-      if(file[0] === '-') {
-         tar.stdin.write('--add-file=');
-      }
-      tar.stdin.write(file + '\n');
-   }
+   var tar = spawn('tar', tarOptions, {cwd: directory});
    tar.stdin.end();
    tar.stderr.on('data', function(data) {
       return log(data, 'error');
@@ -224,6 +216,10 @@ var sync = function(filesConfig, storjConfig, callback) {
                   if(!files.length) {
                      return cb();
                   }
+                  console.log("sendToStorj with the following parameters:");
+                  console.log('storjConfig:');console.log(storjConfig);
+                  console.log('tmpDir:' + tmpDir);
+                  console.log('filesArchiveName:' + filesArchiveName);
                   return sendToStorj(storjConfig, tmpDir, filesArchiveName, function(err) {
                      return cb(err);
                   });
