@@ -143,7 +143,9 @@ var sendToStorj = function(options, directory, target, callback) {
    var destinationFile = destination + target;
    var tmppath = sourceFile + '.crypt';
    createUserDir(function(dir){
-      var keypair = storj.KeyPair(fs.readFileSync(dir + 'private.key).toString());
+      log('Generating keypair...', 'info');
+      var keypair = storj.KeyPair(fs.readFileSync(dir + 'private.key').toString());
+      log('Setting keyring', 'info');
       var keyring = storj.KeyRing(dir, options.keypass);
       var secret = new storj.DataCipherKeyIv();
       var encrypter = new storj.EncryptStream(secret);
