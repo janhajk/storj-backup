@@ -136,7 +136,7 @@ var sendToStorj = function(options, directory, target, callback) {
    var tmppath = sourceFile + '.crypt';
 
    var keypair = storj.KeyPair(fs.readFileSync(options.privatekey).toString());
-   var keyring = storj.KeyRing('./', options.keypass);
+   //var keyring = storj.KeyRing('./', options.keypass);
    var secret = new storj.DataCipherKeyIv();
    var encrypter = new storj.EncryptStream(secret);
 
@@ -217,8 +217,8 @@ var sync = function(filesConfig, storjConfig, callback) {
                      return cb();
                   }
                   console.log("sendToStorj with the following parameters:");
-                  console.log('storjConfig:');console.log(storjConfig);
-                  console.log('tmpDir:' + tmpDir);
+                  console.log('storjConfig: ');console.log(storjConfig);
+                  console.log('tmpDir :' + tmpDir);
                   console.log('filesArchiveName:' + filesArchiveName);
                   return sendToStorj(storjConfig, tmpDir, filesArchiveName, function(err) {
                      return cb(err);
