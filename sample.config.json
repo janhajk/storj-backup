@@ -3,9 +3,9 @@
       "paths": ["testdir/**/*"]
    },
    "storj": {
-      "key": "path/to/private/key",
-      "bucket": "buchet-id",
-      "destination": "/",
+      "email": "",
+      "password": "",
+      "bucket": "bucket-id",
       "keypass" = "keypass",
       "concurrency" = 6
    },

@@ -86,14 +86,6 @@ var mkdir = function(target, callback) {
   });
 };
 
-var createUserDir = function(cb) {
-   var userdir = process.env.HOME + '/.storj/storj-backup/';
-   fs.ensureDir(userdir, function (err) {
-      log(err, 'error') // => null
-      return cb(userdir);
-   });
-};
-
 
 var compressFiles = function(directory, files, output, callback) {
    log("Compression Parameters > directory: " + directory, 'info');
@@ -142,40 +134,39 @@ var sendToStorj = function(options, directory, target, callback) {
    destination = (function(d) {d[0]=='/'||(d='/'+d);d.slice(-1)=='/'||(d+='/');return d})(destination);// make shure path is "/path/"
    var destinationFile = destination + target;
    var tmppath = sourceFile + '.crypt';
-   createUserDir(function(dir){
-      log('Generating keypair...', 'info');
-      var keypair = storj.KeyPair(fs.readFileSync(dir + 'private.key').toString());
-      log('Setting keyring', 'info');
-      var keyring = storj.KeyRing(dir, options.keypass);
-      var secret = new storj.DataCipherKeyIv();
-      var encrypter = new storj.EncryptStream(secret);
-      log('creating storj BridgeClient', 'info');
-      var storjClient = storj.BridgeClient('https://api.storj.io', {
-         keypair: keypair,
-         concurrency: options.concurrency // Set upload concurrency
-      });
-      console.log('Attemping to upload ' + sourceFile + ' to the ' + options.bucket + ' storj-bucket into ' + destinationFile);
-      //Encrypt the file to be uploaded and store it temporarily
-      fs.createReadStream(sourceFile).pipe(encrypter).pipe(fs.createWriteStream(tmppath)).on('finish', function() {
-         // Create token for uploading to bucket by bucketid
-         storjClient.createToken(options.bucket, 'PUSH', function(err, token) {
+   log('Generating keypair...', 'info');
+   var keypair = storj.KeyPair(fs.readFileSync(dir + 'private.key').toString());
+   log('Setting keyring', 'info');
+   var keyring = storj.KeyRing(dir, options.keypass);
+   var secret = new storj.DataCipherKeyIv();
+   var encrypter = new storj.EncryptStream(secret);
+   log('creating storj BridgeClient', 'info');
+   var storjClient = storj.BridgeClient('https://api.storj.io', {
+      keypair: keypair,
+      concurrency: options.concurrency // Set upload concurrency
+   });
+   console.log('Attemping to upload ' + sourceFile + ' to the ' + options.bucket + ' storj-bucket into ' + destinationFile);
+   //Encrypt the file to be uploaded and store it temporarily
+   fs.createReadStream(sourceFile).pipe(encrypter).pipe(fs.createWriteStream(tmppath)).on('finish', function() {
+      // Create token for uploading to bucket by bucketid
+      storjClient.createToken(options.bucket, 'PUSH', function(err, token) {
+         if(err) {
+            console.log('error', err.message);
+         }
+         // Store the file using the bucket id, token, and encrypted file
+         storjClient.storeFileInBucket(options.bucket, token.token, tmppath, function(err, file) {
             if(err) {
-               console.log('error', err.message);
+               return callback(err.message);
             }
-            // Store the file using the bucket id, token, and encrypted file
-            storjClient.storeFileInBucket(options.bucket, token.token, tmppath, function(err, file) {
-               if(err) {
-                  return callback(err.message);
-               }
-               // Save key for access to download file
-               keyring.set(file.id, secret);
-               console.log('info', 'Name: %s, Type: %s, Size: %s bytes, ID: %s', [file.filename, file.mimetype, file.size, file.id]);
-               return callback(false, file);
-            });
+            // Save key for access to download file
+            keyring.set(file.id, secret);
+            console.log('info', 'Name: %s, Type: %s, Size: %s bytes, ID: %s', [file.filename, file.mimetype, file.size, file.id]);
+            return callback(false, file);
          });
       });
    });
 };
+
 
 
 /**
@@ -220,6 +211,13 @@ var sync = function(filesConfig, storjConfig, callback) {
          return compressFiles('./', files, tmpDir + '/' + filesArchiveName, cb);
       },
       function(cb) {
+         var userdir = process.env.HOME + '/.storj/storj-backup/';
+         fs.ensureDir(userdir, function (err) {
+            log(err, 'error') // => null
+            return cb();
+         });
+      },
+      function(cb) {
          var e, error;
          try {
             return async.parallel([
@@ -227,7 +225,7 @@ var sync = function(filesConfig, storjConfig, callback) {
                   if(!files.length) {
                      return cb();
                   }
-                  console.log("sendToStorj with the following parameters:");
+                  console.log('sendToStorj with the following parameters:');
                   console.log('storjConfig: ');console.log(storjConfig);
                   console.log('tmpDir :' + tmpDir);
                   console.log('filesArchiveName:' + filesArchiveName);
