@@ -1,0 +1,12 @@
+{
+   "files": {
+      "paths": ["testdir/**/*"]
+   },
+   "storj": {
+      "key": "path/to/private/key",
+      "bucket": "buchet-id",
+      "destination": "/",
+      "keypass" = "keypass",
+      "concurrency" = 6
+   },
+}
