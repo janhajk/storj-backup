@@ -136,7 +136,7 @@ var sendToStorj = function(options, directory, target, callback) {
    var tmppath = sourceFile + '.crypt';
 
    var keypair = storj.KeyPair(fs.readFileSync(options.key).toString());
-   //var keyring = storj.KeyRing('./', options.keypass);
+   var keyring = storj.KeyRing('./', options.keypass);
    var secret = new storj.DataCipherKeyIv();
    var encrypter = new storj.EncryptStream(secret);
    log('creating storj BridgeClient', 'info');
