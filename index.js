@@ -86,51 +86,16 @@ var mkdir = function(target, callback) {
   });
 };
 
-/**
- * compressDirectory
- *
- * Compressed the directory so we can upload it to storj.
- *
- * @param directory  current working directory
- * @param input     path to input file or directory
- * @param output     path to output archive
- * @param callback   callback(err)
- */
 
-var compressDirectory = function(cwd, input, output, callback) {
-  var tar, tarOptions;
-  tar = void 0;
-  tarOptions = void 0;
+var compressFiles = function(directory, files, output, callback) {
   callback = callback || function() {};
-  tarOptions = ['--force-local', '-zcf', output, input];
-  log('Starting compression of ' + input + ' into ' + output, 'info');
-  tar = spawn('tar', tarOptions, {
-    cwd: cwd
-  });
-  tar.stderr.on('data', function(data) {
-    return log(data, 'error');
-  });
-  tar.on('exit', function(code) {
-    if (code === 0) {
-      log('Successfully compressed', 'info');
-      return callback(null);
-    } else {
-      return callback(new Error('Tar exited with code ' + code));
-    }
-  });
-};
-
-var compressFiles = function(cwd, files, output, callback) {
-  var file, i, len, tar, tarOptions;
-  tar = void 0;
-  tarOptions = void 0;
-  callback = callback || function() {};
-  tarOptions = ['--no-recursion', '--force-local', '-zcf', output, '-T', '-'];
+  var tarOptions = ['--no-recursion', '--force-local', '-zcf', output, '-T', '-'];
   log('Starting compression of ' + files.length + ' files into ' + output, 'info');
-  tar = spawn('tar', tarOptions, {
-    cwd: cwd
-  });
-  for (i = 0, len = files.length; i < len; i++) {
+  // child_process.spawn(command[, args][, options])
+  // cwd <String> Current working directory of the child process
+  var tar = spawn('tar', tarOptions, {cwd: directory});
+  var file = void 0;
+  for (var i = 0, var len = files.length; i < len; i++) {
     file = files[i];
     if (file[0] === '-') {
       tar.stdin.write('--add-file=');
@@ -246,6 +211,7 @@ var sync = function(filesConfig, storjConfig, callback) {
          if(!files.length) {
             return cb();
          }
+         console.log('compressing: '); console.log(files);
          return compressFiles('./', files, tmpDir + '/' + filesArchiveName, cb);
       },
       function(cb) {
