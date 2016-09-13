@@ -6,6 +6,7 @@ var path = require('path');
 var glob = require('glob');
 var crypto = require('crypto');
 
+var userdir = process.env.HOME + '/.storj/storj-backup/';
 
 /**
  * log
@@ -135,9 +136,9 @@ var sendToStorj = function(options, directory, target, callback) {
    var destinationFile = destination + target;
    var tmppath = sourceFile + '.crypt';
    log('Generating keypair...', 'info');
-   var keypair = storj.KeyPair(fs.readFileSync(dir + 'private.key').toString());
+   var keypair = storj.KeyPair(fs.readFileSync(userdir + 'private.key').toString());
    log('Setting keyring', 'info');
-   var keyring = storj.KeyRing(dir, options.keypass);
+   var keyring = storj.KeyRing(userdir, options.keypass);
    var secret = new storj.DataCipherKeyIv();
    var encrypter = new storj.EncryptStream(secret);
    log('creating storj BridgeClient', 'info');
@@ -211,7 +212,6 @@ var sync = function(filesConfig, storjConfig, callback) {
          return compressFiles('./', files, tmpDir + '/' + filesArchiveName, cb);
       },
       function(cb) {
-         var userdir = process.env.HOME + '/.storj/storj-backup/';
          fs.ensureDir(userdir, function (err) {
             log(err, 'error') // => null
             return cb();
