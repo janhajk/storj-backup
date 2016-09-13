@@ -88,7 +88,7 @@ var mkdir = function(target, callback) {
 
 
 var compressFiles = function(directory, files, output, callback) {
-   log("Compression Parameters > directory: " + directory, info);
+   log("Compression Parameters > directory: " + directory, 'info');
    var i, len, file;
    callback = callback || function() {};
    var tarOptions = ['--force-local', '-zcf', output, files.join(" ")];
