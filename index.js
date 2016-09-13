@@ -164,7 +164,7 @@ var compressFiles = function(cwd, files, output, callback) {
  */
 
 var sendToStorj = function(options, directory, target, callback) {
-   var storj = require('storj.js');
+   var storj = require('storj');
    var fs = require('fs');
 
    callback = callback || function() {};
