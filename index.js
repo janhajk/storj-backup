@@ -8,6 +8,7 @@ var crypto = require('crypto');
 var storj = require('storj');
 
 var userdir = process.env.HOME + '/.storj/storj-backup/';
+var api = "https://api.storj.io";
 
 /**
  * log
@@ -139,7 +140,7 @@ var sendToStorj = function(options, directory, target, callback) {
    var secret = new storj.DataCipherKeyIv();
    var encrypter = new storj.EncryptStream(secret);
    log('creating storj BridgeClient', 'info');
-   var storjClient = storj.BridgeClient('https://api.storj.io', {
+   var storjClient = storj.BridgeClient(api, {
       keypair: keypair,
       concurrency: options.concurrency // Set upload concurrency
    });
