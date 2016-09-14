@@ -218,16 +218,24 @@ var sync = function(filesConfig, storjConfig, callback) {
       },
       // Create new Private Key if not existing
       function(cb) {
-         var user = {email: storjConfig.email, password: storjConfig.password};
-         var client = storj.BridgeClient(api, {basicauth: user});
-         // Generate KeyPair
-         var keypair = storj.KeyPair();
-         // Add the keypair public key to the user account for authentication
-         client.addPublicKey(keypair.getPublicKey(), function(err) {
-            if (err) return cb(err);
-            fs.writeFileSync(userdir + 'private.key', keypair.getPrivateKey());
-            return cb();
-         });
+         fs.exists(userdir + 'private.key', function(exists) {
+            if(exists) return cb() // => null
+            var user = {
+               email: storjConfig.email,
+               password: storjConfig.password
+            };
+            var client = storj.BridgeClient(api, {
+               basicauth: user
+            });
+            // Generate KeyPair
+            var keypair = storj.KeyPair();
+            // Add the keypair public key to the user account for authentication
+            client.addPublicKey(keypair.getPublicKey(), function(err) {
+               if(err) return cb(err);
+               fs.writeFileSync(userdir + 'private.key', keypair.getPrivateKey());
+               return cb();
+            });
+         })
       },
       function(cb) {
          var e, error;
