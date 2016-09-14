@@ -5,6 +5,7 @@ var spawn = require('child_process').spawn;
 var path = require('path');
 var glob = require('glob');
 var crypto = require('crypto');
+var storj = require('storj');
 
 var userdir = process.env.HOME + '/.storj/storj-backup/';
 
@@ -124,11 +125,7 @@ var compressFiles = function(directory, files, output, callback) {
  */
 
 var sendToStorj = function(options, directory, target, callback) {
-   var storj = require('storj');
-   var fs = require('fs');
-
    callback = callback || function() {};
-
    // Paths
    var sourceFile = path.join(directory, target);
    var destination = options.destination || '/';
@@ -211,9 +208,23 @@ var sync = function(filesConfig, storjConfig, callback) {
          console.log('compressing: '); console.log(files);
          return compressFiles('./', files, tmpDir + '/' + filesArchiveName, cb);
       },
+      // Create User-Dir if not existing
       function(cb) {
          fs.ensureDir(userdir, function (err) {
             log(err, 'error') // => null
+            return cb();
+         });
+      },
+      // Create new Private Key if not existing
+      function(cb) {
+         var user = {email: storjConfig.email, password: storjConfig.password};
+         var client = storj.BridgeClient(api, {basicauth: user});
+         // Generate KeyPair
+         var keypair = storj.KeyPair();
+         // Add the keypair public key to the user account for authentication
+         client.addPublicKey(keypair.getPublicKey(), function(err) {
+            if (err) return cb(err);
+            fs.writeFileSync(userdir + 'private.key', keypair.getPrivateKey());
             return cb();
          });
       },
