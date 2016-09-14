@@ -1,36 +1,41 @@
 {
-   "name": "storj-backup",
-   "version": "1.0.0",
-   "description": "A tool to help backup files to storj.",
-   "main": "index.js",
-   "preferGlobal": "true",
-   "scripts": {
-      "start": "node ./storj_backup.js -n ./config.json",
-      "test": "echo \"Error: no test specified\" && exit 1"
-   },
-   "bin": {
-      "storj_backup": "./bin/storj_backup.js"
-   },
-   "scripts": {
-      "start": "node ./bin/storj_backup.js ./config.json",
-      "test": "echo \"Error: no test specified\" && exit 1"
-   },
-   "repository": {
-      "type": "git",
-      "url": "https://github.com/janhajk/storj-backup.git"
-   },
-   "keywords": ["storj", "SJCX", "backup"],
-   "author": "Janhajk <janhajk@gmail.com>",
-   "license": "MIT",
-   "dependencies": {
-      "glob": "*",
-      "storj": ">=3.1.2",
-      "async": "~0.1.22",
-      "cli": "~0.4.4-2",
-      "fs-extra": ">=0.30.0",
-      "cli-color": "~0.2.1"
-   },
-   "engines": {
-      "node": ">=0.8"
-   }
+  "name": "storj-backup",
+  "version": "1.0.0",
+  "description": "A tool to help backup files to storj.",
+  "main": "index.js",
+  "preferGlobal": "true",
+  "scripts": {
+    "start": "node ./bin/storj_backup.js ./config.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "storj_backup": "./bin/storj_backup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janhajk/storj-backup.git"
+  },
+  "keywords": [
+    "storj",
+    "SJCX",
+    "backup"
+  ],
+  "author": "Janhajk <janhajk@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "*",
+    "storj": ">=3.1.2",
+    "async": "~0.1.22",
+    "cli": "~0.4.4-2",
+    "fs-extra": ">=0.30.0",
+    "cli-color": "~0.2.1"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "bugs": {
+    "url": "https://github.com/janhajk/storj-backup/issues"
+  },
+  "homepage": "https://github.com/janhajk/storj-backup#readme",
+  "devDependencies": {}
 }
