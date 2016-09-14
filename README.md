@@ -6,6 +6,10 @@ This is a package that makes backing up directories to storj simple.
 
     npm install storj-backup -g
     
+## Run
+Run with
+   node ./bin/storj_backup.js -n ./config.json
+    
 ## Configuration
 
 To configure the backup, you need to pass the binary a JSON configuration file.
