@@ -6,7 +6,7 @@
       "email": "",
       "password": "",
       "bucket": "bucket-id",
-      "keypass" = "keypass",
-      "concurrency" = 6
-   },
+      "keypass" : "keypass",
+      "concurrency" : 6
+   }
 }
