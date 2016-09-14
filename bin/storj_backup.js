@@ -4,6 +4,7 @@
 var cli = require('cli'),
    path = require('path'),
    util = require('util'),
+   pkg = require('../package.json'),
    backup = require('../index.js');
 
 cli.enable('version').setApp(pkg.name, pkg.version).setUsage(cli.app + ' [OPTIONS] <path to json config>');
