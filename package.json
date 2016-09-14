@@ -1,6 +1,6 @@
 {
    "name": "storj-backup",
-   "version": "0.0.2",
+   "version": "1.0.0",
    "description": "A tool to help backup files to storj.",
    "main": "index.js",
    "preferGlobal": "true",
